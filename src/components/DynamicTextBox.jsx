@@ -19,7 +19,6 @@ const DynamicTextBox = () => {
           key={index}
           className="bg-white w-full rounded flex items-center mt-4"
         >
-          {/* <FaEnvelope className="text-gray-400" /> */}
           <input
             type="text"
             name="ingredient"

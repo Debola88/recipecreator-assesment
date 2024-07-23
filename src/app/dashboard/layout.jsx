@@ -8,7 +8,7 @@ export default function RootLayout({ children }) {
   React.useEffect(() => {
     const userExist = window.localStorage.getItem("user");
     if (!userExist) {
-      redirect("/signu");
+      redirect("/");
     }
   });
   return (

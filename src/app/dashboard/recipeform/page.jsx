@@ -1,17 +1,34 @@
-'use client';
+"use client";
+import React, { useState } from "react";
+import { doc, addDoc, collection } from "firebase/firestore";
+import { db, firebase } from "@/app/config/firebase";
+import { getAuth } from "firebase/auth";
 import Button from "@/components/Button";
 import DynamicInputForm from "@/components/DynamicInputForm";
 import DynamicTextBox from "@/components/DynamicTextBox";
 import UploadBox from "@/components/UploadBox";
+import StyledSelect from "@/components/StyledSelect";
+import SuccessModal from "@/components/SuccessModal";
 import { RecipeContext } from "@/contexts/recipecontext/RecipeContext";
-import React, { useState, useContext } from "react";
-import { doc, setDoc, collection, addDoc } from "firebase/firestore";
-import { db, firebase } from "@/app/config/firebase";
-import { getAuth } from "firebase/auth";
 
 const RecipeForm = () => {
   const auth = getAuth(firebase);
   const user = auth.currentUser;
+
+  const categoryOptions = [
+    { value: "breakfast-recipes", label: "Breakfast recipes" },
+    { value: "lunch-recipes", label: "Lunch recipes" },
+    { value: "dinner-recipes", label: "Dinner recipes" },
+    { value: "appetizer-recipes", label: "Appetizer recipes" },
+    { value: "salad-recipes", label: "Salad recipes" },
+    { value: "main-course-recipes", label: "Main-course recipes" },
+    { value: "side-dish-recipes", label: "Side-dish recipes" },
+    { value: "baked-goods-recipes", label: "Baked-goods recipes" },
+    { value: "snack-recipes", label: "Snack recipes" },
+    { value: "dessert-recipes", label: "Dessert recipes" },
+    { value: "soup-recipes", label: "Soup recipes" },
+    { value: "holiday-recipes", label: "Holiday recipes" },
+  ];
 
   const [formData, setFormData] = useState({
     title: "",
@@ -19,7 +36,17 @@ const RecipeForm = () => {
     ingredients: [""],
     instructions: [{ instruction: "", images: [] }],
     image: null,
+    category: "",
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCategoryChange = (selectedValue) => {
+    setFormData({
+      ...formData,
+      category: selectedValue,
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -32,19 +59,27 @@ const RecipeForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log("Submitting form data:", formData);
       const docRef = await addDoc(collection(db, "recipes"), {
         ...formData,
         userId: user.uid,
       });
       console.log("Document written with ID: ", docRef.id);
+      setIsModalOpen(true);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
   };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    window.location.reload();
+  };
+
   React.useEffect(() => {
     console.log("Form Data", formData);
   }, [formData]);
+
 
   return (
     <RecipeContext.Provider
@@ -82,8 +117,17 @@ const RecipeForm = () => {
                   onChange={handleChange}
                   value={formData.share}
                   className="w-full rounded md:text-lg bg-gray-100 p-2 outline-none h-32 flex-1"
-                  placeholder="Share a little more about this dish. what or who insired you to cook it? What makes it special to you? what is your favorite way to eat it?"
+                  placeholder="Share a little more about this dish. what or who inspired you to cook it? What makes it special to you? What is your favorite way to eat it?"
                 ></textarea>
+              </div>
+              <div className="w-full">
+                <StyledSelect
+                  name="category"
+                  value={formData.category}
+                  onChange={handleCategoryChange}
+                  options={categoryOptions}
+                  placeholder="Select a category"
+                />
               </div>
             </div>
           </div>
@@ -113,6 +157,7 @@ const RecipeForm = () => {
           </button>
         </div>
       </form>
+      <SuccessModal isOpen={isModalOpen} closeModal={closeModal} />
     </RecipeContext.Provider>
   );
 };

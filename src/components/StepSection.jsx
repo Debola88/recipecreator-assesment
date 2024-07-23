@@ -1,25 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-// import { getFirestore, collection, getDocs } from "firebase/firestore";
-// import { firebaseApp } from "../firebaseConfig"; // Import your Firebase configuration
-import { RiDeleteBinFill } from "react-icons/ri";
 import food from "@/app/assets/pexels-xmtnguyen-699953.jpg";
 import Image from "next/image";
 
 const StepSection = () => {
   const [sections, setSections] = useState([]);
-
-  //   useEffect(() => {
-  //     const fetchSections = async () => {
-  //       const db = getFirestore(firebaseApp);
-  //       const sectionsCollection = collection(db, "sections");
-  //       const sectionsSnapshot = await getDocs(sectionsCollection);
-  //       const sectionsList = sectionsSnapshot.docs.map(doc => doc.data());
-  //       setSections(sectionsList);
-  //     };
-
-  //     fetchSections();
-  //   }, []);
 
   return (
     <div>

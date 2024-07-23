@@ -1,29 +1,54 @@
-'use client'
-import Image from 'next/image';
-import { useState } from 'react';
-// import { FiHeart, FiHeartFill } from 'react-icons/fi';
+'use client';
+import { FavoritesContext } from "@/contexts/favouritescontext/FavouritesContext";
+import Image from "next/image";
+import { useState, useContext } from "react";
 import { IoIosHeartEmpty, IoIosHeart } from "react-icons/io";
 
+export default function RecipeCard({ recipe, onViewDetails }) {
+  const { favorites, addFavorite, removeFavorite } = useContext(FavoritesContext);
+  const isFavorited = favorites.some(fav => fav.id === recipe.id);
 
-export default function RecipeCard({ name, image, recipe }) {
-  const [isFavorited, setIsFavorited] = useState(false);
-
-  const toggleFavorite = () => {
-    setIsFavorited(!isFavorited);
+  const toggleFavorite = (e) => {
+    e.stopPropagation();
+    if (isFavorited) {
+      removeFavorite(recipe.id);
+    } else {
+      addFavorite(recipe);
+    }
   };
 
   return (
-    <div onClick={() => handleCardClick(recipe.id)} className="flex items-center p-4 bg-white shadow-lg rounded-lg space-x-4">
-      <Image src={image} alt={name} className="h-24 w-24 object-cover rounded-lg" width={500} height={500}/>
-      <div className="flex flex-col justify-between">
-        <h2 className="text-xl font-semibold">{recipe.title}</h2>
-        <button onClick={toggleFavorite} className="self-start">
-          {isFavorited ? (
-            <IoIosHeart className="w-6 h-6 text-red-500" />
-          ) : (
-            <IoIosHeartEmpty className="w-6 h-6 text-red-500" />
-          )}
-        </button>
+    <div className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden transform transition-all duration-300 hover:scale-105">
+      {recipe.image && (
+        <div className="relative h-48 w-full">
+          <Image
+            src={recipe.image}
+            alt={recipe.title}
+            className="object-cover"
+            layout="fill"
+          />
+        </div>
+      )}
+      <div className="flex flex-col p-4">
+        <h2 className="text-xl font-bold text-gray-800 mb-2">{recipe.title}</h2>
+        <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+          {recipe.share}
+        </p>
+        <div className="flex items-center justify-between mt-auto">
+          <button onClick={toggleFavorite} className="self-start">
+            {isFavorited ? (
+              <IoIosHeart className="w-6 h-6 text-red-500" />
+            ) : (
+              <IoIosHeartEmpty className="w-6 h-6 text-red-500" />
+            )}
+          </button>
+          <button
+            onClick={onViewDetails}
+            className="py-2 px-4 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600 transition-all duration-300"
+          >
+            View Details
+          </button>
+        </div>
       </div>
     </div>
   );

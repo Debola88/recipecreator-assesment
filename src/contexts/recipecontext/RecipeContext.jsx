@@ -22,7 +22,6 @@ export const FormProvider = ({ children }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
-    // Handle form submission, e.g., send data to an API or Firebase
   };
 
   return (

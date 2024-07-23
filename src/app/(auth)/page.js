@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import Button from '@/components/Button';
 import { FaEnvelope, FaLock } from 'react-icons/fa6';
 import Link from 'next/link';
-// import firebase from '@/config/firebase';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/usercontext/UserContext';
@@ -48,7 +47,6 @@ export default function Home() {
   return (
     <main className="flex py-10 min-h-screen bg-neutral-100 flex-col items-center justify-between md:p-20 px-5">
       <div className="bg-white rounded-2xl shadow-2xl flex max-md:flex-col md:w-2/3 w-full max-w-4xl md:max-h-4xl">
-        {/* sign in section */}
         <form onSubmit={handleSubmit} className="md:w-3/5 text-center p-10 md:py-12 md:px-20 max-w-full">
           <h2 className="text-green-500 text-3xl font-bold mb-2">Sign in to Account</h2>
           <div className="border-2 w-10 border-green-500 inline-block mb-2"></div>

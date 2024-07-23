@@ -3,11 +3,31 @@ import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/app/config/firebase";
 import Image from "next/image";
-import Link from "next/link";
+import ImageModal from "@/components/ImageModal";
+
+const SkeletonLoader = () => (
+  <div className="animate-pulse min-h-screen max-md:px-5 py-20 flex flex-col items-center justify-center">
+    <div className="w-full max-w-4xl bg-gray-200 h-64 rounded-2xl mx-auto mb-10"></div>
+    <div className="w-full max-w-4xl bg-gray-200 h-16 rounded-2xl mx-auto mb-10"></div>
+    <div className="w-full max-w-4xl bg-gray-200 h-48 rounded-2xl mx-auto mb-10"></div>
+    <div className="w-full max-w-4xl bg-gray-200 h-48 rounded-2xl mx-auto mb-10"></div>
+  </div>
+);
 
 const RecipeDetails = ({ params }) => {
-  const { id } = params; // Get the recipe ID from the URL
+  const { id } = params;
   const [recipeDetails, setRecipeDetails] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     const fetchRecipeDetails = async () => {
@@ -28,24 +48,23 @@ const RecipeDetails = ({ params }) => {
   }, [id]);
 
   if (!recipeDetails) {
-    return <div>Loading...</div>;
+    return <SkeletonLoader />;
   }
 
   return (
-    <div className="recipe-details">
+    <div>
       <div className="min-h-screen max-md:px-5 py-20 flex flex-col items-center justify-center">
-        {/* Display Recipe Image */}
         <div className="text-center bg-white rounded-2xl shadow-2xl flex items-center justify-center max-md:flex-col w-auto max-w-4xl">
           {recipeDetails.image ? (
             <Image
-              src={recipeDetails.image} // Use the image URL from recipeDetails
+              src={recipeDetails.image}
               alt="Recipe Image"
               className="w-auto h-auto max-h-[500px] rounded-2xl object-contain"
               width={500}
               height={500}
             />
           ) : (
-            <p className='p-10'>No image available</p> // Fallback text if no image is available
+            <p className='p-10'>No image available</p>
           )}
         </div>
 
@@ -101,17 +120,18 @@ const RecipeDetails = ({ params }) => {
                         {item.images &&
                           item.images.map((image, imgIndex) => (
                             <div key={imgIndex} className="w-1/3 p-2">
-                              <Link href={image}>
-                                <div className="w-full h-32 flex items-center justify-center relative mb-4">
-                                  <Image
-                                    src={image} // Display the images associated with the instruction
-                                    alt={`Instruction Image ${imgIndex + 1}`}
-                                    className="w-full h-full object-cover rounded"
-                                    width={200}
-                                    height={200}
-                                  />
-                                </div>
-                              </Link>
+                              <div
+                                className="w-full h-32 flex items-center justify-center relative mb-4 cursor-pointer"
+                                onClick={() => openModal(image)}
+                              >
+                                <Image
+                                  src={image}
+                                  alt={`Instruction Image ${imgIndex + 1}`}
+                                  className="w-full h-full object-cover rounded"
+                                  width={200}
+                                  height={200}
+                                />
+                              </div>
                             </div>
                           ))}
                       </div>
@@ -122,6 +142,12 @@ const RecipeDetails = ({ params }) => {
           </div>
         </div>
       </div>
+
+      <ImageModal
+        isOpen={isModalOpen}
+        closeModal={closeModal}
+        imageSrc={selectedImage}
+      />
     </div>
   );
 };

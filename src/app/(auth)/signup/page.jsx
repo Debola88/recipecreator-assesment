@@ -30,10 +30,8 @@ export default function Signup() {
     const auth = getAuth(firebase);
     createUserWithEmailAndPassword(auth, signupData.email, signupData.password)
       .then((userCredential) => {
-        // Signed up
         const user = userCredential.user;
         console.log("New User", user);
-        // ...
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -45,7 +43,6 @@ export default function Signup() {
   return (
     <main className="flex py-10 min-h-screen bg-neutral-100 flex-col items-center justify-between md:p-20 px-5">
       <div className="bg-white rounded-2xl shadow-2xl flex max-md:flex-col md:w-2/3 w-full max-w-4xl md:max-h-4xl">
-        {/* sign up section */}
         <div className="md:w-3/5 text-center p-10 md:py-12 md:px-20 max-w-full">
           <h2 className="text-green-500 text-3xl font-bold mb-2">
             Create an Account
@@ -54,7 +51,6 @@ export default function Signup() {
           <p className="mb-2 text-sm mt-10 text-gray-400">
             Fill up the information to create a new account and explore.
           </p>
-          {/* Sign up form */}
           <form
             onSubmit={handleSubmit}
             className="flex flex-col items-center mt-8"
@@ -95,7 +91,6 @@ export default function Signup() {
             <Button type="submit">Create Account</Button>
           </form>
         </div>
-        {/* sign in section */}
         <div className="md:w-2/5 py-10 px-10 max-w-full text-center bg-green-500 max-md:rounded-b-2xl md:rounded-r-2xl text-white md:py-36 md:px-12">
           <h2 className="text-3xl font-bold mb-2">Welcome Back!</h2>
           <div className="border-2 w-10 border-white inline-block mb-2"></div>

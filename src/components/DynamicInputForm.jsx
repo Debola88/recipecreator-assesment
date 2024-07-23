@@ -5,6 +5,7 @@ import { RecipeContext } from "../contexts/recipecontext/RecipeContext";
 import Image from "next/image";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/app/config/firebase";
+import { FaImages } from "react-icons/fa6";
 
 const DynamicInputForm = () => {
   const { formData, setFormData } = useContext(RecipeContext);
@@ -105,19 +106,8 @@ const DynamicInputForm = () => {
                 </div>
               ))}
               {images.length < 3 && (
-                <label className="h-full flex flex-col items-center justify-center cursor-pointer">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-gray-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H4zm1 10a1 1 0 100 2h10a1 1 0 100-2H5zm3-4a1 1 0 100 2h4a1 1 0 100-2H8zm0-4a1 1 0 100 2h4a1 1 0 100-2H8z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                <label className="flex flex-col h-32 mb-4 items-center justify-center cursor-pointer">
+                  <FaImages className="h-6 w-6 text-gray-400" />
                   <span className="text-gray-400 mt-2 text-sm">
                     Select Image
                   </span>

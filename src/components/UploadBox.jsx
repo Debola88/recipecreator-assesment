@@ -40,7 +40,7 @@ export default function UploadBox() {
             className="h-full w-full object-cover rounded-lg"
             width={200}
             height={200}
-          />
+            required/>
           <button
             onClick={removeImage}
             className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-lg transition-all duration-200 hover:bg-red-300"
