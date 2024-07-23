@@ -12,7 +12,6 @@ import { getAuth } from "firebase/auth";
 const RecipeForm = () => {
   const auth = getAuth(firebase);
   const user = auth.currentUser;
-  console.log("user", user);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -41,12 +40,6 @@ const RecipeForm = () => {
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-  };
-
-  // Handler for button click if needed
-  const handleButtonClick = () => {
-    // Perform any additional actions here if needed
-    console.log("Save Recipe button clicked");
   };
 
   React.useEffect(() => {
@@ -114,7 +107,6 @@ const RecipeForm = () => {
         <div className="py-10 max-w-4xl w-full text-right text-black">
           <button
             type="submit"
-            onClick={handleButtonClick} // Add your click handler here
             className="py-4 px-3 w-full rounded bg-green-500 hover:bg-white border-2 border-green-500 hover:text-green-500 transition-all duration-300 text-white font-semibold"
           >
             Save Recipe

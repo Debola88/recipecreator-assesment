@@ -1,16 +1,34 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { RiDeleteBinFill } from "react-icons/ri";
 import Button from "./Button";
-import { useContext, useRef } from "react";
-import {
-  FormProvider,
-  RecipeContext,
-} from "../contexts/recipecontext/RecipeContext";
+import { RecipeContext } from "../contexts/recipecontext/RecipeContext";
 import Image from "next/image";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/app/config/firebase";
 
 const DynamicInputForm = () => {
-
   const { formData, setFormData } = useContext(RecipeContext);
+
+  const handleImageUpload = async (file, sectionIndex) => {
+    if (!file) return;
+
+    const storageRef = ref(storage, `recipes/${file.name}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    const updatedInstructions = [...formData.instructions];
+    updatedInstructions[sectionIndex].images.push(downloadURL);
+
+    setFormData({
+      ...formData,
+      instructions: updatedInstructions,
+    });
+  };
+
+  const handleImageChange = (sectionIndex, event) => {
+    const file = event.target.files[0];
+    handleImageUpload(file, sectionIndex);
+  };
 
   return (
     <div>
@@ -29,12 +47,11 @@ const DynamicInputForm = () => {
                 value={instruction}
                 name="ingredient"
                 onChange={({ target }) => {
-                  formData.instructions[index] = {
-                    ...formData.instructions[index],
-                    instruction: target.value,
-                  };
+                  const updatedInstructions = [...formData.instructions];
+                  updatedInstructions[index].instruction = target.value;
                   setFormData({
                     ...formData,
+                    instructions: updatedInstructions,
                   });
                 }}
                 className="w-full rounded md:text-lg bg-gray-100 p-2 outline-none h-32 flex-1"
@@ -43,11 +60,12 @@ const DynamicInputForm = () => {
               ></textarea>
               <button
                 onClick={() => {
+                  const updatedInstructions = formData.instructions.filter(
+                    (ing, i) => i !== index
+                  );
                   setFormData({
                     ...formData,
-                    instructions: formData.instructions.filter(
-                      (ing, i) => i !== index
-                    ),
+                    instructions: updatedInstructions,
                   });
                 }}
                 className="bg-red-500 text-white p-3 ml-2 rounded"
@@ -57,32 +75,34 @@ const DynamicInputForm = () => {
             </div>
             <div className="flex flex-wrap w-full">
               {images.map((image, imageIndex) => (
-                  <div key={imageIndex} className="w-1/3 p-2">
-                    <div className="w-full h-32 flex items-center justify-center relative mb-4">
-                      <Image
-                        src={image}
-                        alt={`Preview ${imageIndex + 1}`}
-                        className="w-full h-full object-cover rounded"
-                        style={{ aspectRatio: "1 / 1" }}
-                        width={200}
-                        height={200}
-                      />
-                      <button
-                        onClick={() => {
-                          (formData.instructions[index].images = images.filter(
-                            (img, i) => i !== imageIndex
-                          )),
-                            setFormData({
-                              ...formData,
-                            });
-                          // setShowModal(true);
-                        }}
-                        className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-                      >
-                        <RiDeleteBinFill />
-                      </button>
-                    </div>
+                <div key={imageIndex} className="w-1/3 p-2">
+                  <div className="w-full h-32 flex items-center justify-center relative mb-4">
+                    <Image
+                      src={image}
+                      alt={`Preview ${imageIndex + 1}`}
+                      className="w-full h-full object-cover rounded"
+                      style={{ aspectRatio: "1 / 1" }}
+                      width={200}
+                      height={200}
+                    />
+                    <button
+                      onClick={() => {
+                        const updatedImages = images.filter(
+                          (img, i) => i !== imageIndex
+                        );
+                        const updatedInstructions = [...formData.instructions];
+                        updatedInstructions[index].images = updatedImages;
+                        setFormData({
+                          ...formData,
+                          instructions: updatedInstructions,
+                        });
+                      }}
+                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                    >
+                      <RiDeleteBinFill />
+                    </button>
                   </div>
+                </div>
               ))}
               {images.length < 3 && (
                 <label className="h-full flex flex-col items-center justify-center cursor-pointer">
@@ -103,16 +123,7 @@ const DynamicInputForm = () => {
                   </span>
                   <input
                     type="file"
-                    onChange={({ target }) => {
-                      const imgUrl = URL.createObjectURL(target.files[0]);
-                      formData.instructions[index] = {
-                        ...formData.instructions[index],
-                        images: [...images, imgUrl],
-                      };
-                      setFormData({
-                        ...formData,
-                      });
-                    }}
+                    onChange={(e) => handleImageChange(index, e)}
                     className="hidden"
                     accept="image/*"
                   />
@@ -135,8 +146,6 @@ const DynamicInputForm = () => {
       >
         <Button>Add more step</Button>
       </div>
-
-      {/* Modal */}
     </div>
   );
 };
