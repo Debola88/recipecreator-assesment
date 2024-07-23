@@ -9,50 +9,6 @@ import {
 import Image from "next/image";
 
 const DynamicInputForm = () => {
-  const [sections, setSections] = useState([
-    { text: "", images: [{ image: null }] },
-  ]);
-  const [showModal, setShowModal] = useState(false);
-  const [deleteInfo, setDeleteInfo] = useState({
-    sectionIndex: null,
-    imageIndex: null,
-  });
-
-  const handleSectionChange = (sectionIndex, key, value) => {
-    const newSections = sections.map((section, i) => {
-      if (i === sectionIndex) {
-        return { ...section, [key]: value };
-      }
-      return section;
-    });
-    setSections(newSections);
-  };
-
-  const handleImageChange = (sectionIndex, imageIndex, event) => {
-    const file = event.target.files[0];
-    const newSections = sections.map((section, i) => {
-      if (i === sectionIndex) {
-        const newImages = section.images.map((img, j) => {
-          if (j === imageIndex) {
-            return { image: file ? URL.createObjectURL(file) : null };
-          }
-          return img;
-        });
-        if (file && section.images.length < 3) {
-          newImages.push({ image: null });
-        }
-        return { ...section, images: newImages };
-      }
-      return section;
-    });
-    setSections(newSections);
-  };
-
-
-  const handleModalCancel = () => {
-    setShowModal(false);
-    setDeleteInfo({ sectionIndex: null, imageIndex: null });
-  };
 
   const { formData, setFormData } = useContext(RecipeContext);
 
@@ -101,7 +57,6 @@ const DynamicInputForm = () => {
             </div>
             <div className="flex flex-wrap w-full">
               {images.map((image, imageIndex) => (
-                <>
                   <div key={imageIndex} className="w-1/3 p-2">
                     <div className="w-full h-32 flex items-center justify-center relative mb-4">
                       <Image
@@ -128,40 +83,6 @@ const DynamicInputForm = () => {
                       </button>
                     </div>
                   </div>
-                  {showModal && (
-                    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                      <div className="bg-white p-6 rounded shadow-md">
-                        <h2 className="text-xl font-bold mb-4">
-                          Confirm Image Delete
-                        </h2>
-                        <p>
-                          Are you sure you want to delete this image? {index}
-                        </p>
-                        <div className="mt-4 flex justify-end">
-                          <button
-                            onClick={handleModalCancel}
-                            className="bg-gray-300 text-black p-2 rounded mr-2"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={() => {
-                              (formData.instructions[index].images =
-                                images.filter((img, i) => i !== imageIndex)),
-                                setFormData({
-                                  ...formData,
-                                });
-                              setShowModal(false);
-                            }}
-                            className="bg-red-500 text-white p-2 rounded"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </>
               ))}
               {images.length < 3 && (
                 <label className="h-full flex flex-col items-center justify-center cursor-pointer">
