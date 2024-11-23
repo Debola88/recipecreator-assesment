@@ -6,12 +6,14 @@ import RecipeCard from "@/components/RecipeCard";
 import SearchBar from "@/components/SearchBar";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import Button from "@/components/Button";
+import { useRouter } from 'next/router';
 
 
 const RecipeList = () => {
   const [recipesByCategory, setRecipesByCategory] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRecipes, setFilteredRecipes] = useState({});
+  const router = useRouter();
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -41,7 +43,6 @@ const RecipeList = () => {
 
     fetchRecipes();
   }, []);
-
 
   const handleSearch = () => {
     if (searchTerm.trim() === "") {
@@ -107,12 +108,12 @@ const RecipeList = () => {
               It looks like you haven`t created any recipes yet. Start by adding
               your favorite dish!
             </p>
-            <Button
-              onClick={() => (window.location.href = "/dashboard/recipeform/")}
+            <button
+              onClick={() => router.push("/dashboard/recipeform/")}
               className="py-2 px-6 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600 transition-all duration-300"
             >
               Create Recipe
-            </Button>
+            </button>
           </div>
         </div>
       )}
